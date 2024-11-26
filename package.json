@@ -1,0 +1,39 @@
+{
+    "name": "vite-react-ssg",
+    "version": "0.1",
+    "type": "module",
+    "bin": "src/cli/main.js",
+    "main": "src/vite-plugin.js",
+    "engines": {
+        "node": "^18.0.0 || ^20.0.0 || >=22.0.0"
+    },
+    "dependencies": {
+        "colors": "^1.4.0",
+        "compression": "^1.7.4",
+        "express": "^5.0.1",
+        "sirv": "^3.0.0"
+    },
+    "devDependencies": {
+        "prettier": "^3.3.3"
+    },
+    "description": "`dev`, `build`, and `preview` scripts like Vite to generate static HTML websites from React/JSX",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/carlosneves0/vite-react-ssg.git"
+    },
+    "keywords": [
+        "vite",
+        "react",
+        "jsx",
+        "ssg"
+    ],
+    "author": {
+        "name": "Carlos Neves",
+        "url": "https://carlosn.com.br/"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/carlosneves0/vite-react-ssg/issues"
+    },
+    "homepage": "https://github.com/carlosneves0/vite-react-ssg#readme"
+}
