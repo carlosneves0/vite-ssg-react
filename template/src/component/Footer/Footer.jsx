@@ -1,6 +1,4 @@
-import scriptJS from "./script.js?raw&inline"
-
-console.log("DEBUG", "scriptJS", scriptJS)
+import scriptJS from "./script.js?url"
 
 export default function Footer() {
     return (
@@ -8,7 +6,9 @@ export default function Footer() {
             <hr />
             <p>HTML generated at {new Date().toISOString()}</p>
             <p id="access-time">Site accessed at </p>
-            <script dangerouslySetInnerHTML={{ __html: scriptJS }} />
+            <script src={scriptJS} />
+            {/* ^ NOTE: this becomes an inline base64 script. */}
+            {/* ^ NOTE: what happens for *big* scripts? */}
         </footer>
     )
 }
