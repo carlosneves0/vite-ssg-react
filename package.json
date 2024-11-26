@@ -1,6 +1,6 @@
 {
     "name": "vite-react-ssg",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "bin": "src/cli/main.js",
     "main": "src/vite-plugin.js",
