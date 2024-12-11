@@ -2,7 +2,9 @@
     "name": "vite-reactjsx-ssg",
     "version": "0.1.2",
     "type": "module",
-    "bin": "src/cli/main.js",
+    "bin": {
+        "vite-reactjsx-ssg": "src/cli/main.js"
+    },
     "main": "src/vite-plugin.js",
     "engines": {
         "node": "^18.0.0 || ^20.0.0 || >=22.0.0"
