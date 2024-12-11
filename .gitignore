@@ -1,4 +1,4 @@
 /node_modules
-/tmp
 /template/package-lock.json
+/tmp
 /*.tgz
