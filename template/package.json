@@ -4,15 +4,15 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite-react-ssg dev",
-        "build": "vite-react-ssg build",
+        "dev": "vite-reactjsx-ssg dev",
+        "build": "vite-reactjsx-ssg build",
         "prepreview": "npm run build",
-        "preview": "vite-react-ssg preview"
+        "preview": "vite-reactjsx-ssg preview"
     },
     "devDependencies": {
         "@vitejs/plugin-react-swc": "^3.7.1",
         "react-dom": "^18.3.1",
         "vite": "^5.4.9",
-        "vite-react-ssg": "file:.."
+        "vite-reactjsx-ssg": "file:.."
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "vite-react-ssg",
+    "name": "vite-reactjsx-ssg",
     "version": "0.1.1",
     "type": "module",
     "bin": "src/cli/main.js",
@@ -19,7 +19,7 @@
     "description": "`dev`, `build`, and `preview` scripts like Vite to generate static HTML websites from React/JSX",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/carlosneves0/vite-react-ssg.git"
+        "url": "git+https://github.com/carlosneves0/vite-reactjsx-ssg.git"
     },
     "keywords": [
         "vite",
@@ -33,7 +33,7 @@
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/carlosneves0/vite-react-ssg/issues"
+        "url": "https://github.com/carlosneves0/vite-reactjsx-ssg/issues"
     },
-    "homepage": "https://github.com/carlosneves0/vite-react-ssg#readme"
+    "homepage": "https://github.com/carlosneves0/vite-reactjsx-ssg#readme"
 }
