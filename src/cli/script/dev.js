@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
 import express from "express"
 import { createServer } from "vite"
 import colors from "colors/safe.js"
@@ -16,7 +17,9 @@ const port = parseInt(process.env.PORT, 10) || 5173,
         base,
     }),
     packageJSON = JSON.parse(
-        await readFile(join(import.meta.dirname, "../../../../../package.json")),
+        await readFile(
+            join(dirname(fileURLToPath(import.meta.url)), "../../../../../package.json"),
+        ),
     ),
     viteVersion = (packageJSON?.devDependencies?.vite ?? "").replace(/[^0-9.]/g, "")
 
