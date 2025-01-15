@@ -1,11 +1,21 @@
 import { cwd } from "node:process"
-import { cp, mkdir, readdir, rm, writeFile } from "node:fs/promises"
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises"
 import { dirname, join, relative, sep } from "node:path"
 import { spawn } from "node:child_process"
 import colors from "colors/safe.js"
-import viteConfig from "../../../../../vite.config.js"
 
-const root = viteConfig.root ?? cwd(),
+let viteConfig
+try {
+    viteConfig = (await import("../../../../../vite.config.js")).default
+} catch {
+    try {
+        viteConfig = (await import(join(cwd(), "vite.config.js"))).default
+    } catch {
+        throw new Error("Could not find `vite.config.js` file")
+    }
+}
+
+const root = viteConfig?.root ?? cwd(),
     viteOutDir = join("..", "dist", "server"),
     outDir = relative(cwd(), join(root, viteOutDir)),
     publicOutDir = join("dist", "public"),
@@ -30,19 +40,24 @@ for (const entryPoint of entryPointList) {
     }).finally(() => childProcess.removeAllListeners())
 
     const entryPointOutDir = join(outDir, dirname(entryPoint)),
-        outFilePathList = []
-    let cssFileLink
+        outFilePathList = [],
+        cssLinks = []
     for (const outFile of await readdir(entryPointOutDir, { withFileTypes: true }))
         if (outFile.isFile()) outFilePathList.push(join(entryPointOutDir, outFile.name))
-        else if (outFile.isDirectory() && outFile.name === "asset")
+        else if (outFile.isDirectory() && outFile.name === "asset") {
+            const indexHTMLJS = await readFile(join(outFile.parentPath, "index.html.js"))
             for (const assetFile of await readdir(join(entryPointOutDir, outFile.name), {
                 withFileTypes: true,
             }))
                 if (assetFile.isFile()) {
                     outFilePathList.push(join(entryPointOutDir, "asset", assetFile.name))
-                    if (/\.css$/.test(assetFile.name))
-                        cssFileLink = `/asset/${assetFile.name}`
+                    if (
+                        /\.css$/.test(assetFile.name) &&
+                        !indexHTMLJS.includes(assetFile.name)
+                    )
+                        cssLinks.push(`/asset/${assetFile.name}`)
                 }
+        }
 
     for (const outFilePath of outFilePathList)
         if (/\.html\.js$/.test(outFilePath)) {
@@ -51,12 +66,10 @@ for (const entryPoint of entryPointList) {
                 relative(outDir, outFilePath.replace(/\.js$/, "")),
             )
             console.log(
-                `Rendering ${colors.dim(outFilePath)} to ${colors.bold(publicFilePath)} (with ${colors.dim(cssFileLink)})...`,
+                `Rendering ${colors.dim(outFilePath)} to ${colors.bold(publicFilePath)} (with ${colors.dim(cssLinks.join(", "))})...`,
             )
             await mkdir(dirname(publicFilePath), { recursive: true })
-            const html = (await import(join(cwd(), outFilePath))).render({
-                cssLinks: [cssFileLink],
-            })
+            const html = (await import(join(cwd(), outFilePath))).render({ cssLinks })
             await writeFile(publicFilePath, html)
         } else {
             const publicFilePath = join(

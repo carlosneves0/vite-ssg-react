@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
+import { cwd } from "node:process"
 import express from "express"
 import { createServer } from "vite"
 import colors from "colors/safe.js"
@@ -15,13 +16,24 @@ const port = parseInt(process.env.PORT, 10) || 5173,
         server: { middlewareMode: true },
         appType: "custom",
         base,
-    }),
+    })
+
+let packageJSON
+try {
     packageJSON = JSON.parse(
         await readFile(
             join(dirname(fileURLToPath(import.meta.url)), "../../../../../package.json"),
         ),
-    ),
-    viteVersion = (packageJSON?.devDependencies?.vite ?? "").replace(/[^0-9.]/g, "")
+    )
+} catch {
+    try {
+        packageJSON = JSON.parse(await readFile(join(cwd(), "package.json")))
+    } catch {
+        throw new Error("Could not find `package.json` file")
+    }
+}
+
+const viteVersion = (packageJSON?.devDependencies?.vite ?? "").replace(/[^0-9.]/g, "")
 
 httpServer.use(vite.middlewares)
 
