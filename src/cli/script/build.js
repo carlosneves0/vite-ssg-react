@@ -45,7 +45,7 @@ for (const entryPoint of entryPointList) {
     for (const outFile of await readdir(entryPointOutDir, { withFileTypes: true }))
         if (outFile.isFile()) outFilePathList.push(join(entryPointOutDir, outFile.name))
         else if (outFile.isDirectory() && outFile.name === "asset") {
-            const indexHTMLJS = await readFile(join(outFile.parentPath, "index.html.js"))
+            const indexHTMLJS = await readFile(join(entryPointOutDir, "index.html.js"))
             for (const assetFile of await readdir(join(entryPointOutDir, outFile.name), {
                 withFileTypes: true,
             }))
