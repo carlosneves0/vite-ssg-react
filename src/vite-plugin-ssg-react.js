@@ -1,9 +1,9 @@
 import { join, relative } from "node:path"
 
-export default function reactSSG() {
+export default function ssgReact() {
     let root, isDevelopment
     return {
-        name: "react-ssg",
+        name: "ssg-react",
 
         configResolved(config) {
             root = config.root
@@ -11,7 +11,9 @@ export default function reactSSG() {
             isDevelopment = config.env.DEV
 
             if (isDevelopment) {
-                global.css = new Set() // https://github.com/vitejs/vite/issues/2282#issuecomment-844188264
+                global.htmlLinks = new Set()
+
+                global.cssLinks = new Set() // https://github.com/vitejs/vite/issues/2282#issuecomment-844188264
                 // ^ Why must this be a global?
                 // ^ Because it will be used by the dev SSR script to inject all imported CSS files.
             }
@@ -22,10 +24,14 @@ export default function reactSSG() {
 
             if (/\.css$/.test(id)) {
                 if (isDevelopment) {
-                    // TO-DO: handle CSS import deletions...
-                    global.css.add(join("/", relative(root, id)))
+                    // TO-DO: handle `.css` import deletions...
+                    global.cssLinks.add(join("/", relative(root, id)))
                 }
             } else if (/\.html\.jsx$/.test(id)) {
+                if (isDevelopment) {
+                    // TO-DO: handle `.html.jsx` import deletions...
+                    global.htmlLinks.add(join("/", relative(root, id)))
+                }
                 const defaultExportName = extractDefaultExportName(code)
                 if (!defaultExportName) {
                     console.log(
