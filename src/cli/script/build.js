@@ -1,8 +1,10 @@
 import { cwd } from "node:process"
 import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises"
-import { dirname, join, relative, sep } from "node:path"
+import { basename, dirname, join, relative } from "node:path"
 import { spawn } from "node:child_process"
+import { randomUUID } from "node:crypto"
 import colors from "colors/safe.js"
+import link from "../../lib/link.js"
 
 let viteConfig
 try {
@@ -38,15 +40,28 @@ for (const entryPoint of entryPointList) {
         childProcess.prependOnceListener("error", reject)
         childProcess.prependOnceListener("exit", resolve)
     }).finally(() => childProcess.removeAllListeners())
+}
 
+const initialHTMLs = (await readdir(outDir, { recursive: true }))
+    .filter(path => /\.html\.js$/.test(path))
+    .map(path => ({
+        path: join(root, "..", outDir, path),
+        link: link.absolute(link.normalize(path).replace(/\/?index\.html\.js$/, "")),
+    }))
+
+for (const entryPoint of entryPointList) {
     const entryPointOutDir = join(outDir, dirname(entryPoint)),
         outFilePathList = [],
-        cssLinks = []
-    for (const outFile of await readdir(entryPointOutDir, { withFileTypes: true }))
-        if (outFile.isFile()) outFilePathList.push(join(entryPointOutDir, outFile.name))
-        else if (outFile.isDirectory() && outFile.name === "asset") {
+        cssLinks = [],
+        jsLinks = [],
+        inlineJSLinks = []
+    for (const outFile of await readdir(entryPointOutDir, { withFileTypes: true })) {
+        const outFilePath = join(entryPointOutDir, outFile.name)
+        if (outFile.isFile()) {
+            outFilePathList.push(outFilePath)
+        } else if (outFile.isDirectory() && outFile.name === "asset") {
             const indexHTMLJS = await readFile(join(entryPointOutDir, "index.html.js"))
-            for (const assetFile of await readdir(join(entryPointOutDir, outFile.name), {
+            for (const assetFile of await readdir(outFilePath, {
                 withFileTypes: true,
             }))
                 if (assetFile.isFile()) {
@@ -54,10 +69,19 @@ for (const entryPoint of entryPointList) {
                     if (
                         /\.css$/.test(assetFile.name) &&
                         !indexHTMLJS.includes(assetFile.name)
+                        // ^ TO-DO: convert this "feature" to a URL param: `?url`
                     )
                         cssLinks.push(`/asset/${assetFile.name}`)
+                    else if (/\.js$/.test(assetFile.name)) {
+                        if (/^\.inline\./.test(assetFile.name))
+                            inlineJSLinks.push(
+                                await readFile(join(outFilePath, assetFile.name), "utf8"),
+                            )
+                        else jsLinks.push(`/asset/${assetFile.name}`)
+                    }
                 }
         }
+    }
 
     for (const outFilePath of outFilePathList)
         if (/\.html\.js$/.test(outFilePath)) {
@@ -69,8 +93,29 @@ for (const entryPoint of entryPointList) {
                 `Rendering ${colors.dim(outFilePath)} to ${colors.bold(publicFilePath)} (with ${colors.dim(cssLinks.join(", "))})...`,
             )
             await mkdir(dirname(publicFilePath), { recursive: true })
-            const html = (await import(join(cwd(), outFilePath))).render({ cssLinks })
+            const renderUUID = randomUUID(),
+                { render, __IMPORT_HTML_MODULES } = await import(
+                    join(cwd(), outFilePath)
+                ),
+                htmls =
+                    __IMPORT_HTML_MODULES === true
+                        ? await Promise.all(
+                              initialHTMLs.map(async ({ path, link }) => ({
+                                  path,
+                                  link,
+                                  module: await import(path),
+                              })),
+                          )
+                        : initialHTMLs,
+                html = render({
+                    renderUUID,
+                    htmls,
+                    cssLinks,
+                    jsLinks: [...jsLinks, ...inlineJSLinks],
+                })
             await writeFile(publicFilePath, html)
+        } else if (/^\.inline\./.test(basename(outFilePath))) {
+            continue
         } else {
             const publicFilePath = join(
                 publicOutDir,

@@ -3,13 +3,16 @@ import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { cwd } from "node:process"
+import { randomUUID } from "node:crypto"
 import express from "express"
 import { createServer } from "vite"
 import colors from "colors/safe.js"
 
 assert(process.env.NODE_ENV !== "production", 'process.env.NODE_ENV !== "production"')
 
-const port = parseInt(process.env.PORT, 10) || 5173,
+// TO-DO: allow passing in `--host` like vite.
+const host = "localhost",
+    port = parseInt(process.env.PORT, 10) || 5173,
     base = process.env.BASE || "/",
     httpServer = express(),
     vite = await createServer({
@@ -49,9 +52,23 @@ httpServer.use("*all", async (request, response) => {
 
         // TO-DO: improve logging...
 
-        const render = (await vite.ssrLoadModule(entryPoint)).render,
-            cssLinks = global.css ? [...global.css] : [],
-            html = await vite.transformIndexHtml(viteRequestURL, render({ cssLinks }))
+        const { render, __IMPORT_HTML_MODULES } = await vite.ssrLoadModule(entryPoint),
+            renderUUID = randomUUID(),
+            htmls = await Promise.all(
+                Object.values(global.htmls ?? {}).map(async ({ path, link }) => ({
+                    path,
+                    link,
+                    ...(__IMPORT_HTML_MODULES === true
+                        ? { module: await vite.ssrLoadModule(path) }
+                        : {}),
+                })),
+            ),
+            cssLinks = [...(global.cssLinks ?? new Set())],
+            jsLinks = [...(global.jsLinks ?? new Set())],
+            html = await vite.transformIndexHtml(
+                viteRequestURL,
+                render({ renderUUID, htmls, cssLinks, jsLinks }),
+            )
 
         return response
             .status(200)
@@ -68,6 +85,7 @@ httpServer.use("*all", async (request, response) => {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,user-scalable=yes" />
         <meta name="color-scheme" content="light dark" />
+        <link rel="icon" type="image/gif" href="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
     </head>
     <body>
         <pre style="word-wrap: break-word; white-space: pre-wrap; font-size: 1.2em">${error.stack}</pre>
@@ -78,8 +96,7 @@ httpServer.use("*all", async (request, response) => {
     }
 })
 
-// TO-DO: allow passing in `--host` like vite.
-httpServer.listen({ host: "localhost", port }, () => {
+httpServer.listen({ host, port }, () => {
     const elapsedTimeMs = new Date() - global.__vite_react_ssg_start_time
     console.log()
     console.log(
@@ -89,7 +106,7 @@ httpServer.listen({ host: "localhost", port }, () => {
     )
     console.log()
     console.log(
-        `  ${colors.green("➜")}  Local:   ${colors.cyan(`http://localhost:${colors.bold(port)}/`)}`,
+        `  ${colors.green("➜")}  Local:   ${colors.cyan(`http://${host}:${colors.bold(port)}/`)}`,
     )
     console.log()
 })

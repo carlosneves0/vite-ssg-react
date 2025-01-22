@@ -1,15 +1,16 @@
 {
     "name": "vite-ssg-react",
-    "version": "0.1.6",
+    "version": "0.1.7-dev.0",
     "type": "module",
     "bin": {
         "vite-ssg-react": "src/cli/main.js"
     },
-    "main": "src/main.js",
+    "main": "src/vite-plugin/main.js",
     "engines": {
         "node": "^18.0.0 || ^20.0.0 || >=22.0.0"
     },
     "dependencies": {
+        "chokidar": "^4.0.3",
         "colors": "^1.4.0",
         "compression": "^1.7.4",
         "express": "^5.0.1",
