@@ -40,8 +40,10 @@ export default function ssgVanillaJS() {
                 let assetName, assetSource
                 if (fileURL.searchParams.has("inline")) {
                     const codeUTF8 = await fs.readFile(filePath, "utf8"),
-                        minifiedCodeUTF8 = (await minify(codeUTF8)).code,
-                        codeBase64 = Buffer.from(minifiedCodeUTF8).toString("base64"),
+                        finalCodeUTF8 = config.build.minify
+                            ? (await minify(codeUTF8)).code
+                            : codeUTF8,
+                        codeBase64 = Buffer.from(finalCodeUTF8).toString("base64"),
                         codeBase64DataURL = `data:application/javascript;base64,${codeBase64}`
                     // Ignore directory structure for asset file names.
                     assetName = `.inline.${path.basename(filePath)}`
@@ -49,10 +51,12 @@ export default function ssgVanillaJS() {
                 } else {
                     // Emit as asset.
                     const codeUTF8 = await fs.readFile(filePath, "utf8"),
-                        minifiedCodeUTF8 = (await minify(codeUTF8)).code
+                        finalCodeUTF8 = config.build.minify
+                            ? (await minify(codeUTF8)).code
+                            : codeUTF8
                     // Ignore directory structure for asset file names.
                     assetName = path.basename(filePath)
-                    assetSource = minifiedCodeUTF8
+                    assetSource = finalCodeUTF8
                 }
 
                 const originalFileName = link.normalize(
