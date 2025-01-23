@@ -27,7 +27,7 @@ for (const arg of argv) {
             break
 
         default:
-            // TO-DO: maybe forward these args to vite.
+            // TO-DO: forward these args to vite.
             console.log(`Warn: ignoring command-line argument "${arg}"`)
     }
 }
