@@ -11,8 +11,8 @@ import colors from "colors/safe.js"
 assert(process.env.NODE_ENV !== "production", 'process.env.NODE_ENV !== "production"')
 
 // TO-DO: allow passing in `--host` like vite.
-const host = "localhost",
-    port = parseInt(process.env.PORT, 10) || 5173,
+const host = global.__vite_react_ssg_args.host ?? "localhost",
+    port = global.__vite_react_ssg_args.strictPort || 5173,
     base = process.env.BASE || "/",
     httpServer = express(),
     vite = await createServer({

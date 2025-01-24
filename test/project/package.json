@@ -1,0 +1,18 @@
+{
+    "name": "vite-ssg-react-test-project",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite-ssg-react dev",
+        "build": "vite-ssg-react build",
+        "prepreview": "npm run build",
+        "preview": "vite-ssg-react preview"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react-swc": "^3.7.2",
+        "react-dom": "^18.3.1",
+        "vite": "^5.4.11",
+        "vite-ssg-react": "file:../.."
+    }
+}

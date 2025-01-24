@@ -12,7 +12,9 @@ const SCRIPT = {
     PREVIEW: 2,
 }
 
-for (const arg of argv) {
+global.__vite_react_ssg_args = {}
+for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]
     switch (arg) {
         case "dev":
             script = SCRIPT.DEV
@@ -26,8 +28,26 @@ for (const arg of argv) {
             script = SCRIPT.PREVIEW
             break
 
+        case "--host":
+            if (
+                i + 1 === argv.length ||
+                ["dev", "build", "preview"].includes(argv[i + 1]) ||
+                /^--/.test(argv[i + 1])
+            ) {
+                global.__vite_react_ssg_args.host = "0.0.0.0"
+            } else {
+                global.__vite_react_ssg_args.host = argv[i + 1]
+                i++
+            }
+            break
+
+        case "--strictPort":
+            global.__vite_react_ssg_args.strictPort = argv[i + 1]
+            i++
+            break
+
         default:
-            // TO-DO: forward these args to vite.
+            // TO-DO: maybe forward more args to vite...
             console.log(`Warn: ignoring command-line argument "${arg}"`)
     }
 }

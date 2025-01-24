@@ -1,0 +1,12 @@
+services:
+    dev-server:
+        image: node:18-alpine3.21
+        user: "${USER_ID}:${GROUP_ID}"
+        environment:
+            HOME: /pkg/test/project/node_modules/.home
+        volumes:
+            - .:/pkg
+        ports:
+            - "5173"
+        working_dir: /pkg/test/project
+        command: npm run dev -- --host
