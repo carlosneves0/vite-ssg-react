@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
+import posixPath from "node:path/posix"
 import { fileURLToPath } from "node:url"
 import { cwd } from "node:process"
 import { randomUUID } from "node:crypto"
@@ -41,18 +42,28 @@ const viteVersion = (packageJSON?.devDependencies?.vite ?? "").replace(/[^0-9.]/
 httpServer.use(vite.middlewares)
 
 httpServer.use("*all", async (request, response) => {
-    const viteRequestURL = request.originalUrl.replace(base, "")
+    const viteURL = request.originalUrl.replace(base, "")
     try {
-        const entryPoint = `${/\/$/.test(request.originalUrl) ? "" : request.originalUrl}/index.html.jsx`
-        // entryPoint = url === "" ? "/index.html.jsx" : url
-
-        // TO-DO: improve logic to return 404 for non HTML-JSX files.
-
-        // TO-DO: improve logic to accept `/foo` as either `/foo.html.jsx` or `/foo/index.html`
+        let module
+        try {
+            module = await vite.ssrLoadModule(viteURL)
+        } catch (error) {
+            if (error.code !== "ERR_LOAD_URL") throw error
+            try {
+                module = await vite.ssrLoadModule(
+                    `${viteURL.replace(/\/+$/, "")}.html.jsx`,
+                )
+            } catch (error) {
+                if (error.code !== "ERR_LOAD_URL") throw error
+                module = await vite.ssrLoadModule(
+                    posixPath.join(viteURL, "index.html.jsx"),
+                )
+            }
+        }
 
         // TO-DO: improve logging...
 
-        const { render, __IMPORT_HTML_MODULES } = await vite.ssrLoadModule(entryPoint),
+        const { render, __IMPORT_HTML_MODULES } = module,
             renderUUID = randomUUID(),
             htmls = await Promise.all(
                 Object.values(global.htmls ?? {}).map(async ({ path, link }) => ({
@@ -66,7 +77,7 @@ httpServer.use("*all", async (request, response) => {
             cssLinks = [...(global.cssLinks ?? new Set())],
             jsLinks = [...(global.jsLinks ?? new Set())],
             html = await vite.transformIndexHtml(
-                viteRequestURL,
+                viteURL,
                 render({ renderUUID, htmls, cssLinks, jsLinks }),
             )
 
@@ -78,7 +89,7 @@ httpServer.use("*all", async (request, response) => {
         vite?.ssrFixStacktrace(error)
         console.error(error)
         const html = await vite.transformIndexHtml(
-            viteRequestURL,
+            viteURL,
             `<!doctype html>
 <html>
     <head>
