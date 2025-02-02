@@ -35,7 +35,8 @@ export default function ssgHTML() {
                             link: link.absolute(
                                 link
                                     .normalize(path.relative(config.root, id))
-                                    .replace(/\/?index\.html\.jsx$/, ""),
+                                    .replace(/\/?index\.html\.jsx$/, "")
+                                    .replace(/\.html\.jsx$/, ""),
                             ),
                         }
                     }
