@@ -11,7 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     root: join(__dirname, "src"),
     build: {
-        emptyOutDir: true,
+        // emptyOutDir: true,
         assetsDir: "asset",
         minify: true,
         cssMinify: true,

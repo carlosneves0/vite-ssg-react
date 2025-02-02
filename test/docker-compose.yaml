@@ -5,7 +5,7 @@ services:
         environment:
             HOME: /pkg/test/project/node_modules/.home
         volumes:
-            - .:/pkg
+            - ..:/pkg
         ports:
             - "5173"
         working_dir: /pkg/test/project

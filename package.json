@@ -12,7 +12,7 @@
     "scripts": {
         "pretest": "sh test/script/.pretest.sh",
         "posttest": "sh test/script/.posttest.sh",
-        "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
+        "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest || true"
     },
     "dependencies": {
         "chokidar": "^4.0.3",

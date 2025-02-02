@@ -1,5 +1,4 @@
 /.prettierrc.js
-/docker-compose.yaml
 /jest.config.js
 /test
 /tmp

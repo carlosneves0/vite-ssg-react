@@ -1,13 +1,14 @@
-import NavList from './component/NavList.jsx'
-import "./global-script.js?vanilla"
-import "./global.css"
-import homeCSS from "./home.css?url"
+import NavList from "../component/NavList.jsx"
+import "../global-script.js?vanilla"
+import localScriptJS from "./local-script.js?url"
+// import localScriptInlineJS from "./local-script.js?url&inline"
+// import "./index.css"
 
 export const __IMPORT_HTML_MODULES = true
 
-export const title = "Home"
+export const title = "Foo"
 
-export default function HomePage({ htmls, cssLinks, jsLinks }) {
+export default function FooPage({ htmls, cssLinks, jsLinks }) {
     return (
         <html lang="en">
             <head>
@@ -19,31 +20,19 @@ export default function HomePage({ htmls, cssLinks, jsLinks }) {
                     type="image/gif"
                     href="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                 />
-                {[...cssLinks, homeCSS].map(cssLink => (
+                {cssLinks.map(cssLink => (
                     <link key={cssLink} rel="stylesheet" href={cssLink} />
                 ))}
                 <title>{title}</title>
             </head>
             <body>
                 <NavList title={title} htmls={htmls} />
+
                 <h1>{title}</h1>
-                <p>Hello, world.</p>
-                <p id="thanks">
-                    Many thanks to{" "}
-                    <a href="https://vite.dev/" target="_blank">
-                        {/* <img src="/vite.svg" /> */}
-                        Vite
-                    </a>{" "}
-                    and{" "}
-                    <a href="https://react.dev/" target="_blank">
-                        {/* <img src={reactSVG} /> */}
-                        React
-                    </a>
-                    !
-                </p>
                 {jsLinks.map(jsLink => (
                     <script key={jsLink} src={jsLink} />
                 ))}
+                <script src={localScriptJS} />
             </body>
         </html>
     )
