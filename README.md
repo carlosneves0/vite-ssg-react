@@ -1,4 +1,4 @@
-# `vite-ssg-react`
+# `vite-ssg-react` <a href="https://npmjs.com/package/vite-ssg-react"><img src="https://img.shields.io/npm/v/vite-ssg-react" alt="npm package"></a>
 
 ## Disclaimer
 
