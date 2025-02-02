@@ -58,7 +58,7 @@ export default function Page({ htmls }) {
                     html => (
                         <a key={html.link} href={html.link}>
                             {html.module.title}
-                            {/* NOTE: assuming each `.html.jsx` entrypoint exports a `title` `*/}
+                            {/* Assuming each `.html.jsx` module exports a `title` */}
                         </a>
                     )
                 )}
