@@ -1,5 +1,6 @@
 /.prettierrc.js
 /jest.config.js
+/makefile
 /test
 /tmp
 /*.tgz
