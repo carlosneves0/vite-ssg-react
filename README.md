@@ -56,7 +56,7 @@ export default function Page({ htmls }) {
                 <h2>List of Pages</h2>
                 {htmls.map => (
                     html => (
-                        <a href={html.link}>
+                        <a key={html.link} href={html.link}>
                             {html.module.title}
                             {/* NOTE: assuming each `.html.jsx` entrypoint exports a `title` `*/}
                         </a>
