@@ -46,7 +46,12 @@ const initialHTMLs = (await readdir(outDir, { recursive: true }))
     .filter(path => /\.html\.js$/.test(path))
     .map(path => ({
         path: join(root, "..", outDir, path),
-        link: link.absolute(link.normalize(path).replace(/\/?index\.html\.js$/, "")),
+        link: link.absolute(
+            link
+                .normalize(path)
+                .replace(/\/?index\.html\.js$/, "")
+                .replace(/\.html\.js$/, ""),
+        ),
     }))
 
 for (const entryPoint of entryPointList) {
