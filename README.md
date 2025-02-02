@@ -78,7 +78,7 @@ In Vite, it's usual to straight up import CSS files:
 import "./style.css"
 ```
 
-Each CSS file imported like `import "./style.css"` will automatically be appended to the `cssLinks` prop, which is injected into every `.html.jsx` entrypoint.
+Each CSS file imported like this will automatically be appended to the `cssLinks` prop, which is injected into every `.html.jsx` entrypoint.
 
 > [!IMPORTANT]
 > **Known bug**: _during development_, files imported in this way will be injected into all entrypoints, even if that entrypoint doesn't transitively depend on that CSS file. This bug doesn't happen in the production build.
