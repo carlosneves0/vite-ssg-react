@@ -26,9 +26,9 @@ Each `index.html.jsx` file in the `src` folder will output a corresponding `inde
 
 ### Create a new HTML page
 
-If you want your website to render this web-page at `/foo`, then either create the file `src/foo.html.jsx` or the file `src/foo/index.html.jsx`. In this file, define a JSX component as the default export.
+To render this web-page at `/foo`, then either create the file `src/foo.html.jsx` or the file `src/foo/index.html.jsx`. In this file, define a JSX component as the default export.
 
-Note that your `.html.jsx` files must render the whole HTML structure: `<html>`, `<head>`, and `<body>`. Only the `<!doctype html>` tag is left out.
+Note that `.html.jsx` files must render the whole HTML structure: `<html>`, `<head>`, and `<body>`. Only the `<!doctype html>` tag is left out.
 
 > [!IMPORTANT]
 > **Known limitation**: If `config.build.emptyOutDir` is turned on, then there can't be more than one `.html.jsx` file in the same folder, due to the way the output files are overwritten in `dist/server`.
@@ -44,7 +44,7 @@ This prop carries a list of every `.html.jsx` entrypoint scattered in the `src` 
 }
 ```
 
-If your `.html.jsx` entrypoint defines the `__IMPORT_HTML_MODULES` export below, then the `htmls` prop is incremented with the ESM modules of each `.html.jsx` file:
+If a `.html.jsx` file defines the `__IMPORT_HTML_MODULES` export as below, then its `htmls` prop will be incremented with the ESM modules of each `.html.jsx` file in `src`:
 
 ```js
 export const __IMPORT_HTML_MODULES = true
