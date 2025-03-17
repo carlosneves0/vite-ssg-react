@@ -4,6 +4,45 @@
 
 This repo is very much a work-in-progress at this stage. There are still bugs and things might break.
 
+## Quick Start
+
+> **Compatibility Note:**
+> Vite requires [Node.js](https://nodejs.org/en/) version 18+, 20+. Please upgrade if your package manager warns about it.
+
+```bash
+npm create vite-ssg-react@latest
+```
+
+```bash
+yarn create vite-ssg-react
+```
+
+```bash
+pnpm create vite-ssg-react
+```
+
+```bash
+bun create vite-ssg-react
+```
+
+You may directly specify the project name:
+
+```bash
+npm create vite-ssg-react@latest my-static-site
+```
+
+```bash
+yarn create vite-ssg-react my-static-site
+```
+
+```bash
+pnpm create vite-ssg-react my-static-site
+```
+
+```bash
+bun create vite-ssg-react my-static-site
+```
+
 ## Commands
 
 `dev`, `build`, and `preview` scripts like Vite to generate static HTML websites from React/JSX
