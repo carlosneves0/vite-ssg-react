@@ -123,7 +123,7 @@ Each CSS file imported like this will automatically be appended to the `cssLinks
 > **Known bug**: _during development_, files imported in this way will be injected into all entrypoints, even if that entrypoint doesn't transitively depend on that CSS file. This bug doesn't happen in the production build.
 
 > [!TIP]
-> For now, this can be mitigated by only including "global" CSS for globally shared components. For styles specific to a web-page, include them with the `?url` parameter. [See the session below](#local-css-imports).
+> For now, this can be mitigated by only including "global" CSS for globally shared components. For styles specific to a web-page, include them with the `?url` parameter. [See the section below](#local-css-imports).
 
 The `cssLinks` prop must be rendered as `<link>` tags, otherwise no CSS will be loaded by the final HTML page:
 
